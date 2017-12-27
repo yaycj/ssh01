@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/vegetable?useUnicode=true&amp;characterEncoding=utf-8"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation" value="classpath:config/SqlMapConfig.xml"></property>
+	</bean>
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.offcn.mappers"></property>
+	</bean>
+	
+	   <!--第一个定时任务：定时抓取  -->
+     <bean id="job1" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+     <property name="targetObject">
+     <bean class="com.offcn.serviceImpl.VegetableServiceImpl"></bean>
+     </property>
+     <property name="targetMethod" value="run"></property>
+     <property name="concurrent" value="false"></property><!-- 是否并发调度 -->
+     </bean>  
+     <!-- 定时发送邮件 -->
+      <bean id="job2" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+     <property name="targetObject">
+     <bean class="com.offcn.serviceImpl.SendMail"></bean>
+     </property>
+     <property name="targetMethod" value="send"></property>
+     <property name="concurrent" value="false"></property><!-- 是否并发调度 -->
+     </bean>  
+     
+     <bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+     <property name="jobDetail" ref="job1"></property>
+     <property name="cronExpression" value="0 0/1 14 * * ?"></property>
+     </bean>
+     
+    <bean id="cronTrigger2" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+     <property name="jobDetail" ref="job2"></property>
+     <property name="cronExpression" value="0 0/1 14 * * ?"></property>
+     </bean>
+     
+      <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+      <property name="triggers">
+      <list>
+      <ref bean="cronTrigger" />
+      <ref bean="cronTrigger2"/>
+      </list>
+      </property>
+      </bean>  
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<!-- 邮件smtp服务器地址 -->
+		<property name="host" value="smtp.163.com" />
+		<!-- 邮箱用户名 -->
+		<property name="username" value="13672092996@163.com" />
+		<!-- 邮箱密码 -->
+		<property name="password" value="3979795chen" />
+		<!-- 编码格式 -->
+		<property name="defaultEncoding" value="UTF-8" />
+		<!-- 邮箱服务器属性设置 -->
+		<property name="javaMailProperties">
+			<props>
+				<!-- 邮箱服务器是否支持验证 -->
+				<prop key="mail.smtp.auth">true</prop>
+				<!-- 邮箱服务器连接超时时间 毫秒 -->
+				<prop key="mail.smtp.timeout">300000</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="sendMail" class="com.offcn.serviceImpl.SendMail">
+		<property name="javaMailSenderImpl" ref="mailSender"></property>
+	</bean>
+
+
+</beans>
