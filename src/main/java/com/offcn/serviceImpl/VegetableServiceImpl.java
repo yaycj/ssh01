@@ -30,8 +30,7 @@ public class VegetableServiceImpl implements VegetableService{
 
 	@Autowired
 	private VegetableMapper vegetableMapper;
-	
-	
+
 	public void saveVegetable() {
 		List<Shangpin> velist=new ArrayList<Shangpin>();
 		String plo=zhuaqu();
@@ -109,8 +108,6 @@ public class VegetableServiceImpl implements VegetableService{
 		
 		Document document = Jsoup.parse(entityString); 
 		
-		document.select("table[class=hq_table]").select("table").select("tr");
-		
 		Elements dom = document.select("table[class=hq_table]").select("table").select("tr");
 		List<Shangpin> veList=new ArrayList<Shangpin>();
 		
@@ -136,22 +133,10 @@ public class VegetableServiceImpl implements VegetableService{
 		return veList;
 	}
 	
-
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		System.out.println(111);
 	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }

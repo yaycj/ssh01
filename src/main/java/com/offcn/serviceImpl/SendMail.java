@@ -34,14 +34,10 @@ public class SendMail {
 	 @Autowired
 	 private VegetableMapper vegetableMapper;
 	
-	 
 	public void setJavaMailSenderImpl(JavaMailSenderImpl javaMailSenderImpl) {
 		this.javaMailSenderImpl = javaMailSenderImpl;
 	}
-	
-	
-	
-	
+
 /**
  * 
 * @Title: getPdf

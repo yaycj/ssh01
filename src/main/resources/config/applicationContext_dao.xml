@@ -73,7 +73,7 @@
 		<!-- 邮箱用户名 -->
 		<property name="username" value="13672092996@163.com" />
 		<!-- 邮箱密码 -->
-		<property name="password" value="3979795chen" />
+		<property name="password" value="" />
 		<!-- 编码格式 -->
 		<property name="defaultEncoding" value="UTF-8" />
 		<!-- 邮箱服务器属性设置 -->

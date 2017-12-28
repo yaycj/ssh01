@@ -29,7 +29,6 @@ public class VegetableController {
 	
 	@RequestMapping(value="zhuaqu.action")
 	public String saveZhuaQu(){
-		
 		vegetableService.saveVegetable();
 		return "main.jsp";	
 	}
